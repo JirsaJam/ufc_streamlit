@@ -178,11 +178,13 @@ if st.button('Predict'):
 
     with open('shap_values.pkl', 'rb') as f:
         shap_values = pickle.load(f)
+    
+        #shap_values = explainer.shap_values(final[shap_cols])
 
     
     for i in range(len(final)):
         st.write(f"SHAP values for {final.fid.iloc[i]}")
-        shap_values_for_fighter = shap_values[i]
+        shap_values_for_fighter = explainer.shap_values(final[shap_cols])[i]
 
         # Create a SHAP force plot
         fig, ax = plt.subplots()
