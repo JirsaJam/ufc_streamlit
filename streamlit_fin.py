@@ -14,11 +14,11 @@ with open('xgboost_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 # Load the data
-df = pd.read_csv('MstRecentElo_2023.csv')
+df = pd.read_csv('MstRecentElo.csv')
 df['fid'] = df['name'].astype(str) + "-" + df['fighter_id'].astype(str)
 
 # Streamlit app
-st.title('MMA Fighter Prediction Lookback 2023')
+st.title('MMA Fighter Prediction')
 
 fighters = df['fid'].unique()
 
