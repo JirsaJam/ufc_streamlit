@@ -7,11 +7,15 @@ import shap
 import base64
 from io import BytesIO
 import matplotlib.pyplot as plt
+import sklearn
 
 
 # Load the model
 with open('xgboost_model.pkl', 'rb') as f:
     model = pickle.load(f)
+
+with open('xgboost_calibrated_model.pkl', 'rb') as f:
+    cal_model = pickle.load(f)
 
 # Load the data
 df = pd.read_csv('MstRecentElo.csv')
@@ -127,6 +131,7 @@ if st.button('Predict'):
     df_diff.replace([np.inf, -np.inf], np.nan, inplace=True)
     
     preds = model.predict_proba(df_diff[columns_to_include])[:, 1]
+    preds_cal = cal_model.predict_proba(df_diff[columns_to_include])[:, 1]
     
     columns_to_include_fid = columns_to_include + ['fid']
     
@@ -134,6 +139,7 @@ if st.button('Predict'):
     fin_df = final
     fin_df = fin_df.set_index('fid')
     fin_df['Pred'] = preds
+    fin_df['Cal_Preds'] = preds_cal
     
     st.write(fin_df)
 
