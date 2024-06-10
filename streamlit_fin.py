@@ -10,6 +10,22 @@ import matplotlib.pyplot as plt
 import sklearn
 
 
+def custom_eval_metric(preds, labels):
+    # Transform the raw scores into probabilities
+    preds = 1.0 / (1.0 + np.exp(-preds))
+    
+    # Define the penalty factor for false positives
+    false_positive_penalty = 2.0  # Adjust this factor as needed
+    
+    # Calculate binary cross-entropy loss
+    epsilon = 1e-7
+    bce = -labels * np.log(preds + epsilon) - (1 - labels) * np.log(1 - preds + epsilon)
+    
+    # Apply penalty to false positives
+    bce[labels == 0] *= false_positive_penalty
+    
+    return float(np.mean(bce))
+
 # Load the model
 with open('xgboost_model.pkl', 'rb') as f:
     model = pickle.load(f)
