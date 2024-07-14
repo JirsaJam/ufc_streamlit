@@ -40,13 +40,17 @@ with open('xgboost_calibrated_model_713_norm.pkl', 'rb') as f:
     cal_model_norm = pickle.load(f)
 
 
-data_option = st.selectbox('Select Data', ['Recent', 'Pre-2024'])
+data_option = st.selectbox('Select Data', ['Recent (6/22)', 'Mar (3/29)', 'Pre-2024'])
 
 # Load the data based on selection
-if data_option == 'Recent':
+if data_option == 'Recent (6/22)':
     df = pd.read_csv('MstRecentElo.csv')
+elif data_option == 'Pre-2024':
+    df = pd.read_csv('MstRecentElo_2024.csv')
 else:
-    df = pd.read_csv('MstRecentElo_2024.csv')  # Replace with the path to the other CSV
+    df = pd.read_csv('MstRecentElo_2024_mar.csv')
+
+      # Replace with the path to the other CSV
 
 df['fid'] = df['name'].astype(str) + "-" + df['fighter_id'].astype(str)
 
@@ -54,8 +58,11 @@ df['fid'] = df['name'].astype(str) + "-" + df['fighter_id'].astype(str)
 
 if data_option == 'Recent':
     st.title('MMA Fighter Prediction')
+elif data_option == 'Recent (6/22)':
+    st.title('Pre-2024 MMA Fighter Prediction')
 else:
-    st.title('Pre-2024 MMA Fighter Prediction')  # Replace with the path to the other CSV
+    st.title('3/29 MMA Fighter Prediction')
+
 
 df['MinFight'] = (df['pytime'] > (60 * 15)) | (df['UFCFightNumber'] > 3)
 
