@@ -174,14 +174,17 @@ if st.button('Predict'):
     columns_to_include_fid = columns_to_include + ['fid']
     
     final = df_diff[columns_to_include_fid]
+
     fin_df = final
-    fin_df = fin_df.set_index('fid')
 
     fin_df['Pred_Custom_Brier'] = preds_custom_brier
     fin_df['Cal_Preds_Custom_brier'] = preds_cal_custom_brier
     #news
     fin_df['Pred_Norm'] = preds_norm
     fin_df['Cal_Preds_Norm'] = preds_cal_norm
+    
+    fin_df = fin_df.set_index('fid')
+
     
     st.write(fin_df)
 
