@@ -27,18 +27,37 @@ def custom_eval_metric(preds, labels):
     return float(np.mean(bce))
 
 # Load the model
-with open('xgboost_model.pkl', 'rb') as f:
-    model = pickle.load(f)
+with open('xgboost_model_713.pkl', 'rb') as f:
+    model_custom_brier = pickle.load(f)
 
-with open('xgboost_calibrated_model.pkl', 'rb') as f:
-    cal_model = pickle.load(f)
+with open('xgboost_calibrated_model_713.pkl', 'rb') as f:
+    cal_model_custom_brier = pickle.load(f)
 
-# Load the data
-df = pd.read_csv('MstRecentElo.csv')
+with open('xgboost_model_713_norm.pkl', 'rb') as f:
+    model_norm = pickle.load(f)
+
+with open('xgboost_calibrated_model_713_norm.pkl', 'rb') as f:
+    cal_model_norm = pickle.load(f)
+
+
+data_option = st.selectbox('Select Data', ['Recent', 'Pre-2024'])
+
+# Load the data based on selection
+if data_option == 'Recent':
+    df = pd.read_csv('MstRecentElo.csv')
+else:
+    df = pd.read_csv('MstRecentElo_2024.csv')  # Replace with the path to the other CSV
+
 df['fid'] = df['name'].astype(str) + "-" + df['fighter_id'].astype(str)
 
 # Streamlit app
-st.title('MMA Fighter Prediction')
+
+if data_option == 'Recent':
+    st.title('MMA Fighter Prediction')
+else:
+    st.title('Pre-2024 MMA Fighter Prediction')  # Replace with the path to the other CSV
+
+df['MinFight'] = (df['pytime'] > (60 * 15)) | (df['UFCFightNumber'] > 3)
 
 fighters = df['fid'].unique()
 
@@ -131,7 +150,7 @@ if st.button('Predict'):
     'UFCFightNumber2', 'elo', 'EloDiff', 'EloSinceLastFight', 'Age', 'AgeDiff', 'SinceLastFight', 'KnockedOut', 'KnockOuts',
     'kd', 'kds_received', 'sig_reg_mixture', 'sig_reg_percent', 'sig_strike_attempts', 'sig_strike_landed', 'sig_strike_percent',
     'sig_strikes_avoided', 'sig_strikes_received', 'strike_attempts', 'strike_landed', 'strike_percent', 'strikes_avoided',
-    'strikes_received', 'sub_attempts', 'td_attempts', 'td_landed', 'td_percent', 'tds_defended', 'tds_received'
+    'strikes_received', 'sub_attempts', 'td_attempts', 'td_landed', 'td_percent', 'tds_defended', 'tds_received', 'MinFight'
     ]
 
     df_diff = fill_and_adjust_column(df_diff, 'sig_strike_attempts_cumsum_normalized', 'fight_pk')
@@ -146,16 +165,23 @@ if st.button('Predict'):
     
     df_diff.replace([np.inf, -np.inf], np.nan, inplace=True)
     
-    preds = model.predict_proba(df_diff[columns_to_include])[:, 1]
-    preds_cal = cal_model.predict_proba(df_diff[columns_to_include])[:, 1]
+    preds_custom_brier = model_custom_brier.predict_proba(df_diff[columns_to_include])[:, 1]
+    preds_cal_custom_brier = cal_model_custom_brier.predict_proba(df_diff[columns_to_include])[:, 1]
+
+    preds_norm = model_norm.predict_proba(df_diff[columns_to_include])[:, 1]
+    preds_cal_norm = cal_model_norm.predict_proba(df_diff[columns_to_include])[:, 1]
     
     columns_to_include_fid = columns_to_include + ['fid']
     
     final = df_diff[columns_to_include_fid]
     fin_df = final
     fin_df = fin_df.set_index('fid')
-    fin_df['Pred'] = preds
-    fin_df['Cal_Preds'] = preds_cal
+
+    fin_df['Pred_Custom_Brier'] = preds_custom_brier
+    fin_df['Cal_Preds_Custom_brier'] = preds_cal_custom_brier
+    #news
+    fin_df['Pred_Norm'] = preds_norm
+    fin_df['Cal_Preds_Norm'] = preds_cal_norm
     
     st.write(fin_df)
 
@@ -195,10 +221,10 @@ if st.button('Predict'):
        'strikes_received', 'sub_attempts', 'td_attempts', 'td_landed',
        'td_percent', 'tds_defended', 'tds_received']
     
-    with open('explainer.pkl', 'rb') as f:
+    with open('explainerv2.pkl', 'rb') as f:
         explainer = pickle.load(f)
 
-    with open('shap_values.pkl', 'rb') as f:
+    with open('shap_valuesv2.pkl', 'rb') as f:
         shap_values = pickle.load(f)
     
         #shap_values = explainer.shap_values(final[shap_cols])
