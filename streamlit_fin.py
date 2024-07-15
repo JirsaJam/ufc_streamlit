@@ -40,7 +40,7 @@ with open('xgboost_calibrated_model_713_norm.pkl', 'rb') as f:
     cal_model_norm = pickle.load(f)
 
 
-data_option = st.selectbox('Select Data', ['Recent (6/22)', 'Mar (3/29)', 'Pre-2024'])
+data_option = st.selectbox('Select Data', ['Recent (6/22)', 'Mar (3/30)', 'Pre-2024'])
 
 # Load the data based on selection
 if data_option == 'Recent (6/22)':
@@ -56,9 +56,9 @@ df['fid'] = df['name'].astype(str) + "-" + df['fighter_id'].astype(str)
 
 # Streamlit app
 
-if data_option == 'Recent':
+if data_option == 'Recent (6/22)':
     st.title('MMA Fighter Prediction')
-elif data_option == 'Recent (6/22)':
+elif data_option == 'Pre-2024':
     st.title('Pre-2024 MMA Fighter Prediction')
 else:
     st.title('3/29 MMA Fighter Prediction')
