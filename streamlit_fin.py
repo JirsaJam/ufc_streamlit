@@ -239,19 +239,19 @@ if st.button('Predict'):
     
         #shap_values = explainer.shap_values(final[shap_cols])
 
-    
-    for i in range(len(final)):
-        st.write(f"SHAP values for {final.fid.iloc[i]}")
-        shap_values_for_fighter = explainer.shap_values(final[shap_cols])[i]
-
+#Fix this later
+#     for i in range(len(final)):
+#        st.write(f"SHAP values for {final.fid.iloc[i]}")
+#        shap_values_for_fighter = explainer.shap_values(final[shap_cols])[i]#
+#
         # Create a SHAP force plot
-        fig, ax = plt.subplots()
-        shap.force_plot(explainer.expected_value, shap_values_for_fighter, final[shap_cols].iloc[i].round(2), matplotlib=True, show=False)
-        buf = BytesIO()
-        plt.savefig(buf, format='png')
-        buf.seek(0)
-        img_data = base64.b64encode(buf.read()).decode('utf-8')
-        buf.close()
+#        fig, ax = plt.subplots()
+#        shap.force_plot(explainer.expected_value, shap_values_for_fighter, final[shap_cols].iloc[i].round(2), matplotlib=True, show=False)
+#        buf = BytesIO()
+#        plt.savefig(buf, format='png')
+#        buf.seek(0)
+#        img_data = base64.b64encode(buf.read()).decode('utf-8')
+#        buf.close()
         
         # Display the SHAP force plot in Streamlit
-        st.markdown(f"![SHAP Force Plot](data:image/png;base64,{img_data})")
+#        st.markdown(f"![SHAP Force Plot](data:image/png;base64,{img_data})")
