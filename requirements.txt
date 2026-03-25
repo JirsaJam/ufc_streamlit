@@ -51,7 +51,7 @@ tenacity==8.3.0
 threadpoolctl==3.5.0
 toml==0.10.2
 toolz==0.12.1
-tornado==6.4
+tornado==6.5.5
 tqdm==4.66.4
 typing_extensions==4.12.0
 tzdata==2024.1
